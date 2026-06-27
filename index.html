@@ -585,7 +585,7 @@ function closeLead() {
 
 function skipLead() {
   closeLead();
-  window.open(CHECKOUT_URL, '_blank');
+  window.location.href = CHECKOUT_URL;
 }
 
 function showLeadMsg(txt) {
@@ -609,13 +609,13 @@ function submitLead() {
   btn.textContent = 'Salvando...';
 
   var url = SCRIPT_URL + '?nome=' + encodeURIComponent(nome) + '&whatsapp=' + encodeURIComponent(whats) + '&email=' + encodeURIComponent(email) + '&t=' + Date.now();
-  // Redirecionar imediatamente
-  closeLead();
-  window.open(CHECKOUT_URL, '_blank');
-  
-  // Salvar dados em background sem esperar
+  // Salvar dados em background
   var img = new Image();
   img.src = url;
+  
+  // Fechar popup e redirecionar na mesma aba sem recarregar
+  closeLead();
+  window.location.href = CHECKOUT_URL;
 }
 </script>
 

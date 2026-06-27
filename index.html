@@ -580,6 +580,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function openLead() {
+  // Se já preencheu antes, vai direto para o checkout
+  if(localStorage.getItem('lead_pd10x')) {
+    document.getElementById('loading-overlay').classList.add('show');
+    setTimeout(function(){ window.location.href = CHECKOUT_URL; }, 300);
+    return;
+  }
   document.getElementById('lead-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   setTimeout(function() { document.getElementById('lead-nome').focus(); }, 150);
@@ -620,6 +626,9 @@ function submitLead() {
   // Salvar dados em background
   var img = new Image();
   img.src = url;
+  
+  // Salvar no navegador para não pedir de novo
+  localStorage.setItem('lead_pd10x', '1');
   
   // Fechar popup, mostrar loading e redirecionar
   closeLead();

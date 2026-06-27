@@ -36,6 +36,12 @@
 .lead-skip:hover{color:#fff}
 .lead-footer{margin-top:16px;padding-top:16px;border-top:1px solid #222;font-size:11px;color:#aaa;text-align:center}
 #lead-msg{display:none;position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #FF5500;color:#fff;padding:14px 24px;border-radius:12px;font-size:14px;z-index:999999;white-space:nowrap}
+
+#loading-overlay{display:none;position:fixed;inset:0;z-index:999998;background:#0a0a0a;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+#loading-overlay.show{display:flex}
+.loading-spinner{width:44px;height:44px;border:3px solid #1a1a1a;border-top:3px solid #FF5500;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:#888;font-family:'Barlow',sans-serif}
 </style>
 </head>
 <body>
@@ -531,6 +537,7 @@ else{attachPixel();}
 </script>
 
 <!-- POPUP LEAD -->
+<div id="loading-overlay"><div class="loading-spinner"></div><p class="loading-text">Redirecionando para o checkout...</p></div>
 <div id="lead-overlay">
   <div id="lead-box">
     <button id="lead-close" onclick="closeLead()" aria-label="Fechar">✕</button>
@@ -585,7 +592,8 @@ function closeLead() {
 
 function skipLead() {
   closeLead();
-  window.location.href = CHECKOUT_URL;
+  document.getElementById('loading-overlay').classList.add('show');
+  setTimeout(function(){ window.location.href = CHECKOUT_URL; }, 300);
 }
 
 function showLeadMsg(txt) {
@@ -613,9 +621,10 @@ function submitLead() {
   var img = new Image();
   img.src = url;
   
-  // Fechar popup e redirecionar na mesma aba sem recarregar
+  // Fechar popup, mostrar loading e redirecionar
   closeLead();
-  window.location.href = CHECKOUT_URL;
+  document.getElementById('loading-overlay').classList.add('show');
+  setTimeout(function(){ window.location.href = CHECKOUT_URL; }, 300);
 }
 </script>
 

@@ -339,7 +339,7 @@
             <div class="price-vista">ou <strong>R$ 47</strong> à vista no PIX</div>
           </div>
 
-          <a href="#" onclick="openLead();return false;" class="btn-buy">
+          <a href="javascript:void(0)" onclick="openLead()" class="btn-buy">
             🔒 Garantir minha vaga agora
           </a>
           <div class="pbadges">
@@ -387,7 +387,7 @@
     <div class="tag" style="justify-content:center"><span>Decisão</span></div>
     <h2 class="final-h">Seu delivery pode<br>faturar <b>10X mais</b></h2>
     <p class="final-p">A diferença entre um delivery estagnado e um que escala não é o produto — é o sistema de captação. O Método PD10X é esse sistema. 7 dias de garantia. O risco é todo nosso.</p>
-    <a href="#" onclick="openLead();return false;" class="btn-main pulse" style="font-size:clamp(.9rem,2.5vw,1rem)">Sim, quero multiplicar meu faturamento</a>
+    <a href="javascript:void(0)" onclick="openLead()" class="btn-main pulse" style="font-size:clamp(.9rem,2.5vw,1rem)">Sim, quero multiplicar meu faturamento</a>
     <div class="final-g" style="margin-top:14px">▸ Garantia de <b>7 dias</b> &nbsp;·&nbsp; De R$597 por <b>R$47</b> à vista &nbsp;·&nbsp; Acesso imediato</div>
   </div>
 </section>
@@ -609,12 +609,12 @@ function submitLead() {
   btn.textContent = 'Salvando...';
 
   var url = SCRIPT_URL + '?nome=' + encodeURIComponent(nome) + '&whatsapp=' + encodeURIComponent(whats) + '&email=' + encodeURIComponent(email) + '&t=' + Date.now();
+  // Redirecionar imediatamente
+  closeLead();
+  window.open(CHECKOUT_URL, '_blank');
+  
+  // Salvar dados em background sem esperar
   var img = new Image();
-  img.onload = img.onerror = function() {
-    closeLead();
-    showLeadMsg('✅ Dados salvos! Redirecionando...');
-    setTimeout(function() { window.open(CHECKOUT_URL, '_blank'); }, 1200);
-  };
   img.src = url;
 }
 </script>

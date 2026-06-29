@@ -610,5 +610,50 @@ function submitLead() {
 }
 </script>
 
+
+<!-- Aviso de geolocalização por cidade -->
+<div id="geo-toast" style="display:none;position:fixed;bottom:24px;left:20px;z-index:9998;max-width:320px;background:#111113;border:1px solid rgba(255,85,0,.3);border-left:3px solid #FF5500;padding:14px 18px;box-shadow:0 4px 24px rgba(0,0,0,.5);opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease">
+  <div style="display:flex;align-items:flex-start;gap:10px">
+    <span style="font-size:1.1rem;flex-shrink:0">📍</span>
+    <p id="geo-msg" style="font-family:'Barlow',sans-serif;font-size:.88rem;font-weight:400;color:#E0E2EA;line-height:1.5;margin:0"></p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var toast = document.getElementById('geo-toast');
+  var msg = document.getElementById('geo-msg');
+  if(!toast || !msg) return;
+
+  // Buscar cidade via API gratuita
+  fetch('https://ipapi.co/json/')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var city = data.city || '';
+      var state = data.region_code || '';
+      if(!city) return;
+
+      var location = state ? city + ', ' + state : city;
+      msg.innerHTML = 'O método já está sendo aplicado em deliveries de <strong style="color:#fff">' + location + '</strong>';
+
+      // Mostrar após 8 segundos
+      setTimeout(function(){
+        toast.style.display = 'block';
+        setTimeout(function(){
+          toast.style.opacity = '1';
+          toast.style.transform = 'translateY(0)';
+        }, 50);
+
+        // Sumir após 6 segundos
+        setTimeout(function(){
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(12px)';
+          setTimeout(function(){ toast.style.display = 'none'; }, 500);
+        }, 6000);
+      }, 8000);
+    })
+    .catch(function(){});
+})();
+</script>
 </body>
 </html>

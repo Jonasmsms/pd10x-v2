@@ -611,21 +611,95 @@ function submitLead() {
 </script>
 
 
-<!-- Aviso de geolocalização por cidade -->
-<div id="geo-toast" style="display:none;position:fixed;bottom:24px;left:20px;z-index:9998;max-width:320px;background:#111113;border:1px solid rgba(255,85,0,.3);border-left:3px solid #FF5500;padding:14px 18px;box-shadow:0 4px 24px rgba(0,0,0,.5);opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease">
-  <div style="display:flex;align-items:flex-start;gap:10px">
-    <span style="font-size:1.1rem;flex-shrink:0">📍</span>
-    <p id="geo-msg" style="font-family:'Barlow',sans-serif;font-size:.88rem;font-weight:400;color:#E0E2EA;line-height:1.5;margin:0"></p>
-  </div>
+
+
+<!-- Aviso geolocalização — estilo neon da página -->
+<style>
+#geo-toast{
+  display:none;
+  position:fixed;
+  bottom:28px;
+  left:20px;
+  z-index:9998;
+  max-width:300px;
+  background:linear-gradient(135deg,#0E0E10,#131315);
+  border:1px solid rgba(255,85,0,.5);
+  border-left:3px solid #FF5500;
+  padding:16px 20px;
+  box-shadow:0 0 24px rgba(255,85,0,.15),0 4px 32px rgba(0,0,0,.6);
+  opacity:0;
+  transform:translateX(-20px);
+  transition:opacity .6s ease,transform .6s ease;
+}
+#geo-toast.show{
+  opacity:1;
+  transform:translateX(0);
+}
+#geo-tag{
+  font-family:'Barlow',sans-serif;
+  font-size:.65rem;
+  font-weight:700;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:#FF5500;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:8px;
+}
+#geo-tag::before{
+  content:'';
+  width:14px;
+  height:1.5px;
+  background:#FF5500;
+  box-shadow:0 0 6px #FF5500;
+  flex-shrink:0;
+}
+#geo-msg{
+  font-family:'Barlow',sans-serif;
+  font-size:clamp(.88rem,2.5vw,.95rem);
+  font-weight:400;
+  color:#E0E2EA;
+  line-height:1.55;
+  margin:0;
+}
+#geo-msg strong{
+  color:#fff;
+  font-weight:700;
+}
+#geo-bar{
+  margin-top:10px;
+  height:2px;
+  background:rgba(255,85,0,.15);
+  border-radius:2px;
+  overflow:hidden;
+}
+#geo-bar-fill{
+  height:100%;
+  width:100%;
+  background:linear-gradient(90deg,#FF5500,#FF7733);
+  box-shadow:0 0 8px rgba(255,85,0,.5);
+  transform-origin:left;
+  transform:scaleX(1);
+  transition:transform linear;
+}
+</style>
+
+<div id="geo-toast">
+  <div id="geo-tag">Aplicado agora</div>
+  <p id="geo-msg"></p>
+  <div id="geo-bar"><div id="geo-bar-fill"></div></div>
 </div>
 
 <script>
 (function(){
   var toast = document.getElementById('geo-toast');
   var msg = document.getElementById('geo-msg');
+  var fill = document.getElementById('geo-bar-fill');
   if(!toast || !msg) return;
 
-  // Buscar cidade via API gratuita
+  var VISIBLE_MS = 9000;
+
   fetch('https://ipapi.co/json/')
     .then(function(r){ return r.json(); })
     .then(function(data){
@@ -633,24 +707,28 @@ function submitLead() {
       var state = data.region_code || '';
       if(!city) return;
 
-      var location = state ? city + ', ' + state : city;
-      msg.innerHTML = 'O método já está sendo aplicado em deliveries de <strong style="color:#fff">' + location + '</strong>';
+      var location = state ? '<strong>' + city + ', ' + state + '</strong>' : '<strong>' + city + '</strong>';
+      msg.innerHTML = 'O método já está sendo aplicado em deliveries de ' + location;
 
-      // Mostrar após 8 segundos
+      // Mostrar após 7 segundos
       setTimeout(function(){
         toast.style.display = 'block';
         setTimeout(function(){
-          toast.style.opacity = '1';
-          toast.style.transform = 'translateY(0)';
-        }, 50);
+          toast.classList.add('show');
 
-        // Sumir após 6 segundos
-        setTimeout(function(){
-          toast.style.opacity = '0';
-          toast.style.transform = 'translateY(12px)';
-          setTimeout(function(){ toast.style.display = 'none'; }, 500);
-        }, 6000);
-      }, 8000);
+          // Barra de progresso
+          if(fill){
+            fill.style.transition = 'transform ' + VISIBLE_MS + 'ms linear';
+            setTimeout(function(){ fill.style.transform = 'scaleX(0)'; }, 50);
+          }
+
+          // Sumir
+          setTimeout(function(){
+            toast.classList.remove('show');
+            setTimeout(function(){ toast.style.display = 'none'; }, 600);
+          }, VISIBLE_MS);
+        }, 50);
+      }, 7000);
     })
     .catch(function(){});
 })();
